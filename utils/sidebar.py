@@ -153,8 +153,6 @@ def render_sidebar():
     with st.sidebar:
         from pathlib import Path
         logo_path = Path(__file__).parent.parent / "data" / "figures" / "logo.png"
-        if logo_path.exists():
-            st.image(str(logo_path), use_container_width=True)
         st.markdown("## MoCA Subtyping Explorer")
         st.markdown(
             "Data-driven MoCA cognitive subtypes reveal hidden heterogeneity "
@@ -179,6 +177,8 @@ def render_sidebar():
             st.session_state["tier_filter"] = selected_tier[0]
 
         st.divider()
+        if logo_path.exists():
+            st.image(str(logo_path), use_container_width=True)
         st.caption("*MoCA Uses Beyond MCI Screening*, AAN 2026")
         st.caption("Bhukdee et al. | Chulalongkorn University")
         st.markdown(

@@ -136,7 +136,14 @@ def forest_plot(cox: dict, model_name: str, title: str = "") -> go.Figure:
         return go.Figure()
 
     data = cox[model_name]
-    groups = sorted(data["groups"].keys())
+    # Sort: tier E→A (reverse alpha on last char), then number 0→x
+    tier_order = {"E": 0, "D": 1, "C": 2, "B": 3, "A": 4}
+    def _sort_key(g):
+        clean = g.replace("S-", "")
+        if len(clean) >= 2 and clean[-1].isalpha():
+            return (tier_order.get(clean[-1], 9), int(clean[:-1]) if clean[:-1].isdigit() else 99)
+        return (9, g)  # Petersen groups go last
+    groups = sorted(data["groups"].keys(), key=_sort_key)
     hrs = [data["groups"][g]["hr"] for g in groups]
     ci_lo = [data["groups"][g]["ci_lo"] for g in groups]
     ci_hi = [data["groups"][g]["ci_hi"] for g in groups]
