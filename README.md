@@ -51,5 +51,9 @@ Then copy the generated JSON files to this app's `data/` directory.
 ## ADNI Data Use Agreement
 
 This app contains **no individual-level ADNI data**. All values are aggregate statistics
-(means, medians, percentages) with minimum group size n >= 10. No PTID, RID, or
-identifiable information is included.
+(means, medians, percentages). No PTID, RID, or
+identifiable information or individual-level data is included.
+
+## AI Assistance
+
+Claude (Anthropic, Opus 4.6) was used for assistance with code debugging and language editing. The authors reviewed and take full responsibility for all content. No participant-level data from ADNI or KCMH was shared with any AI tool, in compliance with the ADNI Data Use Agreement.
