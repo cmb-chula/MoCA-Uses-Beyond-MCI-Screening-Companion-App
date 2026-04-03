@@ -1,4 +1,4 @@
-"""Page 4: Interactive Cognitive Decline Cascade Network & Markov Transitions."""
+"""Page 4: Cognitive Decline Cascade Network & Markov Transitions."""
 
 import streamlit as st
 
@@ -16,101 +16,85 @@ info = load_pathway_info()
 profiles = load_domain_profiles()
 trans = load_transition_matrix()
 
-# ── Interactive cascade network ────────────────────────────────
+# ── Static cascade figure ──────────────────────────────────────
 st.subheader("Cascade Network")
+st.markdown(
+    "All 27 cognitive subtypes across 5 severity tiers. "
+    "Three optimal pathways trace distinct routes from normal-borderline "
+    "(Tier E) to severe impairment (Tier A)."
+)
 
-if info:
-    st.markdown(
-        "All 27 cognitive subtypes across 5 severity tiers. "
-        "Three optimal pathways trace distinct routes from normal-borderline "
-        "(Tier E) to severe impairment (Tier A)."
-    )
+net_path = figure_path("cascade_network.png")
+if net_path:
+    st.image(str(net_path), use_container_width=True,
+             caption="Steepest (red), Predominant (blue), Fastest (green)")
 
-    # Collect all subtypes for the multiselect
-    all_subs = set()
-    if trans:
+# ── Interactive network ────────────────────────────────────────
+with st.expander("Interactive cascade explorer"):
+    if info and trans:
+        pathways = info.get("pathways", {})
+
+        # Single row of pathway buttons
+        pw_key = "cascade_pw"
+        current_pw = st.session_state.get(pw_key, "all")
+        pw_cols = st.columns(4)
+        for col, (val, label) in zip(pw_cols, [
+            ("all", "All Pathways"),
+            ("steepest", "Steepest"),
+            ("predominant", "Predominant"),
+            ("fastest", "Fastest"),
+        ]):
+            with col:
+                if st.button(label, key=f"pw_{val}", use_container_width=True,
+                             type="primary" if current_pw == val else "secondary"):
+                    st.session_state[pw_key] = val
+                    current_pw = val
+
+        # Node multiselect with pathway quick-fills
+        all_subs = set()
         for src, targets in trans.items():
             all_subs.add(src)
             all_subs.update(targets.keys())
-    if profiles:
-        all_subs.update(profiles.keys())
-    for pdata in info.get("pathways", {}).values():
-        all_subs.update(pdata["subtypes"])
-    all_subs = sorted(all_subs, key=lambda s: (s[-1], int(s[:-1]) if s[:-1].isdigit() else 0))
+        if profiles:
+            all_subs.update(profiles.keys())
+        all_subs = sorted(all_subs, key=lambda s: (s[-1], int(s[:-1]) if s[:-1].isdigit() else 0))
 
-    # Build pathway node sets for quick-select buttons
-    pathways = info.get("pathways", {})
-    pw_node_sets = {}
-    all_pw_nodes = set()
-    for pname, pdata in pathways.items():
-        pw_node_sets[pname] = pdata["subtypes"]
-        all_pw_nodes.update(pdata["subtypes"])
+        node_sel_key = "cascade_nodes"
+        qcols = st.columns(4)
+        pw_names = list(pathways.keys())
+        quick = [
+            ("all_pw", "All Pathway Nodes", sorted(set().union(*(set(p["subtypes"]) for p in pathways.values())))),
+        ] + [(p, f"{pathways[p]['label'].split('(')[0].strip()} Nodes", pathways[p]["subtypes"]) for p in pw_names]
 
-    # --- Pathway highlight buttons ---
-    st.markdown("**Highlight pathway edges:**")
-    pw_cols = st.columns(5)
-    pw_key = "cascade_pw"
-    current_pw = st.session_state.get(pw_key, "all")
+        for col, (bkey, label, nodes) in zip(qcols, quick):
+            with col:
+                if st.button(label, key=f"qn_{bkey}", use_container_width=True):
+                    st.session_state[node_sel_key] = [f"S-{n}" for n in nodes]
 
-    pw_options = [
-        ("all", "All 3 Pathways"),
-        ("steepest", "Steepest"),
-        ("predominant", "Predominant"),
-        ("fastest", "Fastest"),
-        ("none", "No Highlight"),
-    ]
-    for col, (val, label) in zip(pw_cols, pw_options):
-        with col:
-            if st.button(label, key=f"pw_{val}", use_container_width=True,
-                         type="primary" if current_pw == val else "secondary"):
-                st.session_state[pw_key] = val
-                current_pw = val
+        default_nodes = st.session_state.get(node_sel_key, [])
+        selected_nodes = st.multiselect(
+            "Highlight subtypes",
+            [f"S-{s}" for s in all_subs],
+            default=default_nodes,
+            key=node_sel_key,
+        )
+        highlight_nodes = {s.replace("S-", "") for s in selected_nodes} if selected_nodes else None
 
-    # --- Node quick-select buttons (populate multiselect) ---
-    st.markdown("**Highlight nodes:**")
-    qcols = st.columns(5)
-    node_sel_key = "cascade_nodes"
+        fig = cascade_network_chart(
+            info=info, transitions=trans, profiles=profiles,
+            highlight_pathway=current_pw, highlight_nodes=highlight_nodes,
+        )
+        st.plotly_chart(fig, use_container_width=True, config={
+            "responsive": True, "scrollZoom": True, "displayModeBar": True,
+            "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+        })
+    else:
+        st.info("Transition data not available for interactive view.")
 
-    quick_options = [
-        ("all_pw", "All Pathway Nodes", sorted(all_pw_nodes)),
-        ("steepest_n", "Steepest Nodes", pw_node_sets.get("steepest", [])),
-        ("predominant_n", "Predominant Nodes", pw_node_sets.get("predominant", [])),
-        ("fastest_n", "Fastest Nodes", pw_node_sets.get("fastest", [])),
-        ("clear", "Clear Selection", []),
-    ]
-    for col, (bkey, label, nodes) in zip(qcols, quick_options):
-        with col:
-            if st.button(label, key=f"qn_{bkey}", use_container_width=True):
-                st.session_state[node_sel_key] = [f"S-{n}" for n in nodes]
-
-    # Multiselect for individual node picking
-    default_nodes = st.session_state.get(node_sel_key, [])
-    selected_nodes = st.multiselect(
-        "Select subtypes to highlight (or use buttons above)",
-        [f"S-{s}" for s in all_subs],
-        default=default_nodes,
-        key=node_sel_key,
-    )
-    highlight_nodes = {s.replace("S-", "") for s in selected_nodes} if selected_nodes else None
-
-    # --- Network chart ---
-    fig = cascade_network_chart(
-        info=info,
-        transitions=trans,
-        profiles=profiles,
-        highlight_pathway=current_pw,
-        highlight_nodes=highlight_nodes,
-    )
-    st.plotly_chart(fig, use_container_width=True, config={
-        "responsive": True,
-        "scrollZoom": True,
-        "displayModeBar": True,
-        "modeBarButtonsToRemove": ["lasso2d", "select2d"],
-    })
-
-    # --- Pathway descriptions ---
+# ── Pathway definitions ────────────────────────────────────────
+if info:
     with st.expander("Pathway definitions"):
-        for pname, pdata in pathways.items():
+        for pname, pdata in info.get("pathways", {}).items():
             arrow = " \u2192 ".join([f"S-{s}" for s in pdata["subtypes"]])
             color = pdata["color"]
             st.markdown(
@@ -118,18 +102,6 @@ if info:
                 f'<br><code>{arrow}</code>',
                 unsafe_allow_html=True,
             )
-else:
-    # Fallback: static image
-    net_path = figure_path("cascade_network.png")
-    if net_path:
-        st.image(str(net_path), use_container_width=True,
-                 caption="Cascade with 3 pathways: Steepest (red), Predominant (blue), Fastest (green)")
-    else:
-        comp_path = figure_path("cascade_composite.png")
-        if comp_path:
-            st.image(str(comp_path), use_container_width=True)
-        else:
-            st.info("Cascade network figure not available.")
 
 # ── Transition matrix heatmap ──────────────────────────────────
 st.subheader("Annual Transition Probabilities")
@@ -138,14 +110,15 @@ if trans is None:
     show_data_missing("Transition matrix")
 else:
     tier_filter = st.session_state.get("tier_filter")
-    all_subs_t = sorted(trans.keys(), key=lambda x: (x[-1], int(x[:-1]) if x[:-1].isdigit() else 0))
+    _tier_ord = {"E": 0, "D": 1, "C": 2, "B": 3, "A": 4}
+    all_subs_t = sorted(trans.keys(), key=lambda x: (_tier_ord.get(x[-1], 9), int(x[:-1]) if x[:-1].isdigit() else 0))
 
     if tier_filter:
         src_subs = [s for s in all_subs_t if s[-1] == tier_filter]
         tier_idx = "EDCBA".index(tier_filter) if tier_filter in "EDCBA" else -1
         next_tier = "EDCBA"[tier_idx + 1] if 0 <= tier_idx < 4 else None
         tgt_subs = src_subs + ([s for s in all_subs_t if s[-1] == next_tier] if next_tier else [])
-        tgt_subs = sorted(set(tgt_subs), key=lambda x: (x[-1], int(x[:-1]) if x[:-1].isdigit() else 0))
+        tgt_subs = sorted(set(tgt_subs), key=lambda x: (_tier_ord.get(x[-1], 9), int(x[:-1]) if x[:-1].isdigit() else 0))
     else:
         tgt_subs = all_subs_t
 
