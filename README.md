@@ -5,6 +5,10 @@ Companion web app for the AAN 2026 poster:
 
 Bhukdee et al. | Chulalongkorn University, Bangkok, Thailand
 
+**Live app:** [aan2026.streamlit.app](https://aan2026.streamlit.app/)
+
+![QR Code](qr_aan2026.png)
+
 ## Quick Start
 
 ```bash
