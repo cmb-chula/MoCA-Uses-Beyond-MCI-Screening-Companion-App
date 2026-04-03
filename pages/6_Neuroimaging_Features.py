@@ -39,8 +39,12 @@ if available:
         if str(fig_path).endswith(".svg"):
             with open(str(fig_path)) as f:
                 svg_content = f.read()
+            # Scale SVG to fit container width
+            svg_content = svg_content.replace(
+                "<svg ", '<svg style="width:100%; height:auto; max-width:800px;" ', 1
+            )
             st.markdown(
-                f'<div style="width:100%; overflow-x:auto;">{svg_content}</div>',
+                f'<div style="width:100%; display:flex; justify-content:center;">{svg_content}</div>',
                 unsafe_allow_html=True,
             )
             st.caption(f"{selected_fig} — DTI + Amyloid + sMRI feature heatmap per subtype")
