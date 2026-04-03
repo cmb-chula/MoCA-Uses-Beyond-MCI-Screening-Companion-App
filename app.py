@@ -22,7 +22,7 @@ render_sidebar()
 # ── Main page ───────────────────────────────────────────────────
 st.title("MoCA Uses Beyond MCI Screening Companion App")
 st.markdown(
-    "**Dhup Bhukdee 1,2,3**, Arp-Arpa Kasemsantitham 1, Sira Sriswasdi 1,2,3, "
+    "**Dhup Bhukdee 1,2,3**, Arp-Arpa Kasemsantitham 1, Sira Sriswasdi 2,3, "
     "Chaipat Chunharas 1, for the Alzheimer's Disease Neuroimaging Initiative"
 )
 st.markdown(

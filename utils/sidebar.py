@@ -178,5 +178,14 @@ def render_sidebar():
         st.caption(
             "Companion to *MoCA Uses Beyond MCI Screening*, AAN 2026  \n"
             "Bhukdee et al. | Chulalongkorn University  \n"
+            "Contact:"
             "dhup.bh@gmail.com"
+            "ORCiD:"
+            "https://orcid.org/0000-0003-1984-1996"
+            "LinkedIn:"
+            "https://linkedin.com/in/dhup"
+            "CCCN:"
+            "https://cccnlab.co/"
+            "CMB"
+            "https://cmbcu.github.io/"
         )
