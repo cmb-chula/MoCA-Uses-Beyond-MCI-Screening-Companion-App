@@ -151,6 +151,10 @@ def render_sidebar():
     st.markdown(_CSS, unsafe_allow_html=True)
 
     with st.sidebar:
+        from pathlib import Path
+        logo_path = Path(__file__).parent.parent / "data" / "figures" / "logo.png"
+        if logo_path.exists():
+            st.image(str(logo_path), use_container_width=True)
         st.markdown("## MoCA Subtyping Explorer")
         st.markdown(
             "Data-driven MoCA cognitive subtypes reveal hidden heterogeneity "
@@ -175,17 +179,15 @@ def render_sidebar():
             st.session_state["tier_filter"] = selected_tier[0]
 
         st.divider()
-        st.caption(
-            "Companion to *MoCA Uses Beyond MCI Screening*, AAN 2026  \n"
-            "Bhukdee et al. | Chulalongkorn University  \n"
-            "Contact: \n"
-            "dhup.bh@gmail.com \n"
-            "ORCiD: \n"
-            "https://orcid.org/0000-0003-1984-1996 \n"
-            "LinkedIn: \n"
-            "https://linkedin.com/in/dhup \n"
-            "CCCN: \n"
-            "https://cccnlab.co/ \n"
-            "CMB \n"
-            "https://cmbcu.github.io/"
+        st.caption("*MoCA Uses Beyond MCI Screening*, AAN 2026")
+        st.caption("Bhukdee et al. | Chulalongkorn University")
+        st.markdown(
+            '<p style="font-size:12px; line-height:1.6; color:#ccc; margin-top:8px;">'
+            '<a href="mailto:dhup.bh@gmail.com" style="color:#D4AF37;">dhup.bh@gmail.com</a><br>'
+            '<a href="https://orcid.org/0000-0003-1984-1996" style="color:#D4AF37;">ORCiD</a> · '
+            '<a href="https://linkedin.com/in/dhup" style="color:#D4AF37;">LinkedIn</a><br>'
+            '<a href="https://cccnlab.co/" style="color:#D4AF37;">CCCN Lab</a> · '
+            '<a href="https://cmbcu.github.io/" style="color:#D4AF37;">CMB Lab</a>'
+            '</p>',
+            unsafe_allow_html=True,
         )
