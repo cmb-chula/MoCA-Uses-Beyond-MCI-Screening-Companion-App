@@ -39,7 +39,8 @@ if demo is None:
 
 # Build rows
 rows = []
-for sub, d in sorted(demo.items(), key=lambda x: (x[0][-1], int(x[0][:-1]) if x[0][:-1].isdigit() else 0)):
+_tier_ord = {"E": 0, "D": 1, "C": 2, "B": 3, "A": 4}
+for sub, d in sorted(demo.items(), key=lambda x: (_tier_ord.get(x[0][-1], 9), int(x[0][:-1]) if x[0][:-1].isdigit() else 0)):
     tier = d.get("tier", sub[-1])
     if tier_filter and tier != tier_filter:
         continue

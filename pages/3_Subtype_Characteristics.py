@@ -31,7 +31,8 @@ feature_labels = {
     "cdr_1plus": "CDR 1+ (%)",
 }
 
-subtypes = sorted(demo.keys(), key=lambda x: (x[-1], int(x[:-1]) if x[:-1].isdigit() else 0))
+_tier_ord = {"E": 0, "D": 1, "C": 2, "B": 3, "A": 4}
+subtypes = sorted(demo.keys(), key=lambda x: (_tier_ord.get(x[-1], 9), int(x[:-1]) if x[:-1].isdigit() else 0))
 if tier_filter:
     subtypes = [s for s in subtypes if s[-1] == tier_filter]
 
