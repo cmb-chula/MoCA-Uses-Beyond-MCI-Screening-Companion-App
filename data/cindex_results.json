@@ -1,0 +1,20 @@
+{
+  "All Subtypes": {
+    "cindex": 0.8,
+    "ci_lo": 0.451,
+    "ci_hi": 0.528,
+    "n": 2118
+  },
+  "Cascade Only": {
+    "cindex": 0.783,
+    "ci_lo": 0.444,
+    "ci_hi": 0.541,
+    "n": 1394
+  },
+  "Petersen MCI": {
+    "cindex": 0.626,
+    "ci_lo": 0.428,
+    "ci_hi": 0.508,
+    "n": 664
+  }
+}

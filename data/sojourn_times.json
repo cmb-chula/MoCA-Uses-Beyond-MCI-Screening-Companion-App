@@ -1,0 +1,184 @@
+{
+  "0A": {
+    "n_spells": 74,
+    "n_events": 44,
+    "km_median": 1.12,
+    "km_rmst": 2.42,
+    "q_sojourn": 2.22
+  },
+  "1A": {
+    "n_spells": 53,
+    "n_events": 35,
+    "km_median": 1.1,
+    "km_rmst": 1.59,
+    "q_sojourn": 1.86
+  },
+  "2A": {
+    "n_spells": 21,
+    "n_events": 12,
+    "km_median": 1.99,
+    "km_rmst": 2.52,
+    "q_sojourn": 3.11
+  },
+  "0B": {
+    "n_spells": 50,
+    "n_events": 48,
+    "km_median": 1.0,
+    "km_rmst": 1.01,
+    "q_sojourn": 1.04
+  },
+  "1B": {
+    "n_spells": 43,
+    "n_events": 37,
+    "km_median": 1.02,
+    "km_rmst": 1.15,
+    "q_sojourn": 1.25
+  },
+  "2B": {
+    "n_spells": 47,
+    "n_events": 44,
+    "km_median": 1.02,
+    "km_rmst": 1.16,
+    "q_sojourn": 1.19
+  },
+  "3B": {
+    "n_spells": 47,
+    "n_events": 44,
+    "km_median": 1.01,
+    "km_rmst": 1.26,
+    "q_sojourn": 1.29
+  },
+  "4B": {
+    "n_spells": 44,
+    "n_events": 41,
+    "km_median": 1.01,
+    "km_rmst": 1.01,
+    "q_sojourn": 1.06
+  },
+  "0C": {
+    "n_spells": 469,
+    "n_events": 410,
+    "km_median": 1.05,
+    "km_rmst": 1.57,
+    "q_sojourn": 1.62
+  },
+  "1C": {
+    "n_spells": 516,
+    "n_events": 463,
+    "km_median": 1.03,
+    "km_rmst": 1.55,
+    "q_sojourn": 1.57
+  },
+  "2C": {
+    "n_spells": 415,
+    "n_events": 377,
+    "km_median": 1.03,
+    "km_rmst": 1.39,
+    "q_sojourn": 1.43
+  },
+  "0D": {
+    "n_spells": 85,
+    "n_events": 81,
+    "km_median": 1.02,
+    "km_rmst": 1.27,
+    "q_sojourn": 1.31
+  },
+  "1D": {
+    "n_spells": 46,
+    "n_events": 45,
+    "km_median": 0.98,
+    "km_rmst": 0.96,
+    "q_sojourn": 0.98
+  },
+  "3D": {
+    "n_spells": 19,
+    "n_events": 19,
+    "km_median": 0.97,
+    "km_rmst": 1.18,
+    "q_sojourn": 1.18
+  },
+  "4D": {
+    "n_spells": 24,
+    "n_events": 24,
+    "km_median": 0.98,
+    "km_rmst": 0.88,
+    "q_sojourn": 0.88
+  },
+  "5D": {
+    "n_spells": 159,
+    "n_events": 156,
+    "km_median": 1.01,
+    "km_rmst": 1.18,
+    "q_sojourn": 1.19
+  },
+  "6D": {
+    "n_spells": 408,
+    "n_events": 385,
+    "km_median": 1.02,
+    "km_rmst": 1.43,
+    "q_sojourn": 1.46
+  },
+  "7D": {
+    "n_spells": 904,
+    "n_events": 756,
+    "km_median": 1.59,
+    "km_rmst": 2.39,
+    "q_sojourn": 2.4
+  },
+  "0E": {
+    "n_spells": 68,
+    "n_events": 65,
+    "km_median": 1.0,
+    "km_rmst": 1.21,
+    "q_sojourn": 1.22
+  },
+  "1E": {
+    "n_spells": 24,
+    "n_events": 24,
+    "km_median": 1.06,
+    "km_rmst": 1.14,
+    "q_sojourn": 1.14
+  },
+  "2E": {
+    "n_spells": 6,
+    "n_events": 6,
+    "km_median": 0.98,
+    "km_rmst": 1.08,
+    "q_sojourn": 1.08
+  },
+  "3E": {
+    "n_spells": 27,
+    "n_events": 27,
+    "km_median": 0.99,
+    "km_rmst": 0.99,
+    "q_sojourn": 0.99
+  },
+  "4E": {
+    "n_spells": 10,
+    "n_events": 10,
+    "km_median": 0.94,
+    "km_rmst": 0.94,
+    "q_sojourn": 0.94
+  },
+  "5E": {
+    "n_spells": 53,
+    "n_events": 53,
+    "km_median": 1.02,
+    "km_rmst": 1.27,
+    "q_sojourn": 1.27
+  },
+  "6E": {
+    "n_spells": 68,
+    "n_events": 67,
+    "km_median": 1.0,
+    "km_rmst": 1.25,
+    "q_sojourn": 1.26
+  },
+  "7E": {
+    "n_spells": 596,
+    "n_events": 550,
+    "km_median": 1.08,
+    "km_rmst": 1.76,
+    "q_sojourn": 1.79
+  }
+}

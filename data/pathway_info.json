@@ -1,0 +1,88 @@
+{
+  "tier_order": ["E", "D", "C", "B", "A"],
+  "tier_names": {
+    "A": "MoCA 0\u201313",
+    "B": "MoCA 14\u201317",
+    "C": "MoCA 18\u201322",
+    "D": "MoCA 23\u201324",
+    "E": "MoCA 25\u201327"
+  },
+  "tier_stages": {
+    "A": "Severe Impairment",
+    "B": "Moderate\u2013to-Severe Impairment",
+    "C": "Probable MCI",
+    "D": "Likely MCI",
+    "E": "Normal/ Questionable MCI"
+  },
+  "tier_ranges": {
+    "A": [0, 13],
+    "B": [13, 17],
+    "C": [17, 22],
+    "D": [22, 24],
+    "E": [24, 27]
+  },
+  "tier_colors": {
+    "A": "#1F77B4",
+    "B": "#FF7F0E",
+    "C": "#2CA02C",
+    "D": "#D62728",
+    "E": "#9467BD"
+  },
+  "cascade_tier_colors": {
+    "E": "#7E57C2", "D": "#E53935", "C": "#43A047", "B": "#FB8C00", "A": "#1E88E5"
+  },
+  "cascade_tier_bands": {
+    "E": "#EDE7F6", "D": "#FFEBEE", "C": "#E8F5E9", "B": "#FFF3E0", "A": "#E3F2FD"
+  },
+  "domains": ["VIS", "NAME", "ATTEN", "LAN", "ABS", "DELAY", "ORI"],
+  "domain_labels": {
+    "VIS": "Visuospatial (0-5)",
+    "NAME": "Naming (0-3)",
+    "ATTEN": "Attention (0-6)",
+    "LAN": "Language (0-3)",
+    "ABS": "Abstraction (0-2)",
+    "DELAY": "Delayed Recall (0-5)",
+    "ORI": "Orientation (0-6)"
+  },
+  "domain_max": {
+    "VIS": 5, "NAME": 3, "ATTEN": 6, "LAN": 3, "ABS": 2, "DELAY": 5, "ORI": 6
+  },
+  "pathways": {
+    "steepest": {
+      "subtypes": ["2E", "3D", "0C", "3B", "0A"],
+      "color": "#E74C3C",
+      "dash": "solid",
+      "label": "Steepest Decline (max product P_out)"
+    },
+    "predominant": {
+      "subtypes": ["7E", "7D", "2C", "4B", "0A"],
+      "color": "#3498DB",
+      "dash": "dash",
+      "label": "Predominant Pathway (max product counts)"
+    },
+    "fastest": {
+      "subtypes": ["2E", "1D", "2C", "0B", "0A"],
+      "color": "#27AE60",
+      "dash": "dashdot",
+      "label": "Fastest Decline (min sum sojourn RMST)"
+    }
+  },
+  "cascade_subtypes": [
+    "0A", "0B", "0C", "1D", "2C", "2E", "3B", "3D", "4B", "7D", "7E"
+  ],
+  "petersen_palette": {
+    "aMCI-sd": "#008080",
+    "aMCI-md": "#DA70D6",
+    "naMCI-sd": "#8B4513",
+    "naMCI-md": "#000000"
+  },
+  "modality_colors": {
+    "DTI": "#1f77b4",
+    "Amyloid": "#ff7f0e",
+    "sMRI": "#2ca02c"
+  },
+  "survival_refs": {
+    "subtype": "S-2C",
+    "petersen": "aMCI-sd"
+  }
+}

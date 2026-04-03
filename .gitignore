@@ -1,0 +1,19 @@
+# Deployment scripts (cuaim-specific)
+*.sh
+*.sbatch
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+streamlit.log
+
+# IDE
+.vscode/
+.idea/

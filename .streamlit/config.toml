@@ -1,0 +1,13 @@
+[theme]
+# Matches poster: dark teal green sidebar, Chula gold accent, white content
+primaryColor = "#D4AF37"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#1B5E4E"
+textColor = "#1A1A1A"
+font = "sans serif"
+
+[server]
+maxUploadSize = 5
+
+[browser]
+gatherUsageStats = false
