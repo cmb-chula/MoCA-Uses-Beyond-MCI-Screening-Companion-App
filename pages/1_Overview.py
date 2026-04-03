@@ -43,19 +43,24 @@ for sub, d in sorted(demo.items(), key=lambda x: (x[0][-1], int(x[0][:-1]) if x[
     tier = d.get("tier", sub[-1])
     if tier_filter and tier != tier_filter:
         continue
+    dash = "\u2014"
+    pm = "\u00b1"
+    age_m = d.get("age_mean")
+    edu_m = d.get("edu_mean")
+    moca_m = d.get("moca_mean")
     rows.append({
         "tier_letter": tier,
         "Subtype": f"S-{sub}",
-        "Tier": f"{tier} \u2014 {TIER_NAMES.get(tier, '')}",
+        "Tier": f"{tier} {dash} {TIER_NAMES.get(tier, '')}",
         "Stage": TIER_STAGES.get(tier, ""),
         "n": d["n"],
-        "Age": f"{d.get('age_mean', '\u2014')} \u00b1 {d.get('age_std', '')}" if d.get('age_mean') else "\u2014",
-        "% Female": f"{d.get('pct_female', '\u2014')}",
-        "Edu (yr)": f"{d.get('edu_mean', '\u2014')} \u00b1 {d.get('edu_std', '')}" if d.get('edu_mean') else "\u2014",
-        "MoCA": f"{d.get('moca_mean', '\u2014')} \u00b1 {d.get('moca_std', '')}" if d.get('moca_mean') else "\u2014",
-        "CDR 0": f"{d.get('cdr_0', '\u2014')}%",
-        "CDR 0.5": f"{d.get('cdr_05', '\u2014')}%",
-        "CDR 1+": f"{d.get('cdr_1plus', '\u2014')}%",
+        "Age": f"{age_m} {pm} {d.get('age_std', '')}" if age_m else dash,
+        "% Female": str(d.get("pct_female", dash)),
+        "Edu (yr)": f"{edu_m} {pm} {d.get('edu_std', '')}" if edu_m else dash,
+        "MoCA": f"{moca_m} {pm} {d.get('moca_std', '')}" if moca_m else dash,
+        "CDR 0": f"{d.get('cdr_0', dash)}%",
+        "CDR 0.5": f"{d.get('cdr_05', dash)}%",
+        "CDR 1+": f"{d.get('cdr_1plus', dash)}%",
     })
 
 if rows:

@@ -8,7 +8,6 @@ from utils.data_loader import (
 )
 from utils.sidebar import render_sidebar
 from utils.plotting import cascade_network_chart, transition_heatmap, sojourn_bar_chart
-from utils.styling import TIER_NAMES
 
 render_sidebar()
 st.header("Cognitive Decline Cascade")

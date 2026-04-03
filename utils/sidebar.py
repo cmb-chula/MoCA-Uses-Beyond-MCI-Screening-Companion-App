@@ -154,7 +154,7 @@ def render_sidebar():
         st.markdown("## MoCA Subtyping Explorer")
         st.markdown(
             "Data-driven MoCA cognitive subtypes reveal hidden heterogeneity "
-            "in MCI and Dementia, predicting dementia conversion and mapping to distinct "
+            "in MCI and dementia, predicting dementia conversion and mapping to distinct "
             "neuroimaging signatures."
         )
         st.divider()

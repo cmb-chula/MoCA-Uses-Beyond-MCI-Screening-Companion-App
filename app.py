@@ -1,5 +1,5 @@
 """
-MCI Subtyping Interactive Explorer
+MoCA Subtyping Interactive Explorer
 ===================================
 Companion app for AAN 2026 poster:
 "MoCA Uses Beyond MCI Screening: Data-Driven MoCA Score-Based Subtypes
@@ -9,7 +9,7 @@ for Prediction of Dementia Outcomes and Neuroimaging Feature Analysis"
 import streamlit as st
 
 st.set_page_config(
-    page_title="MCI Subtyping Explorer",
+    page_title="MoCA Subtyping Explorer",
     page_icon=":brain:",
     layout="wide",
     initial_sidebar_state="expanded",

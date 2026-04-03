@@ -1,4 +1,4 @@
-# MCI Subtyping Interactive Explorer
+# MoCA Subtyping Interactive Explorer
 
 Companion web app for the AAN 2026 poster:
 **"MoCA Uses Beyond MCI Screening: Data-Driven MoCA Score-Based Subtypes for Prediction of Dementia Outcomes and Neuroimaging Feature Analysis"**

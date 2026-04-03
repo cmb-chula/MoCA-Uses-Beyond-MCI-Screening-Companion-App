@@ -140,8 +140,6 @@ def forest_plot(cox: dict, model_name: str, title: str = "") -> go.Figure:
     hrs = [data["groups"][g]["hr"] for g in groups]
     ci_lo = [data["groups"][g]["ci_lo"] for g in groups]
     ci_hi = [data["groups"][g]["ci_hi"] for g in groups]
-    pvals = [data["groups"][g].get("p", data["groups"][g].get("pval")) for g in groups]
-
     colors = [subtype_color(g.replace("S-", "")) if g.startswith("S-") or g[0].isdigit()
               else PETERSEN_PALETTE.get(g, "#666") for g in groups]
 
