@@ -27,7 +27,7 @@ rfecv = load_rfecv_accuracy()
 st.subheader("Neuroimaging Feature Heatmaps")
 
 heatmap_files = {
-    "Poster Portrait": "heatmap_poster_portrait.png",
+    "Poster Figure": "heatmap_poster_portrait.svg",
     "RFECV Importance": "rfecv_importance_landscape.png",
 }
 
@@ -36,8 +36,17 @@ if available:
     selected_fig = st.selectbox("Select heatmap view", list(available.keys()))
     fig_path = figure_path(available[selected_fig])
     if fig_path:
-        st.image(str(fig_path), use_container_width=True,
-                 caption=f"{selected_fig} — DTI + Amyloid + sMRI feature heatmap per subtype")
+        if str(fig_path).endswith(".svg"):
+            with open(str(fig_path)) as f:
+                svg_content = f.read()
+            st.markdown(
+                f'<div style="width:100%; overflow-x:auto;">{svg_content}</div>',
+                unsafe_allow_html=True,
+            )
+            st.caption(f"{selected_fig} — DTI + Amyloid + sMRI feature heatmap per subtype")
+        else:
+            st.image(str(fig_path), use_container_width=True,
+                     caption=f"{selected_fig} — DTI + Amyloid + sMRI feature heatmap per subtype")
 else:
     st.info("Heatmap figures not available. Run export script to copy figures from pipeline output.")
 
