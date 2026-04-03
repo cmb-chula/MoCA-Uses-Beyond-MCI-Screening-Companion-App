@@ -42,7 +42,7 @@ with col1:
         "- **3 distinct decline cascades** mapped through Markov multistate "
         "modeling: steepest, predominant, and fastest pathways\n"
         "- **Superior dementia prediction** vs. Petersen MCI criteria "
-        "(C-index: 0.800 vs. 0.703)\n"
+        "(C-index: 0.800 vs. 0.626)\n"
         "- **Neuroimaging validation**: distinct DTI, amyloid PET, and "
         "structural MRI signatures per subtype"
     )
