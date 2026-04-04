@@ -24,10 +24,21 @@ st.markdown(
     "(Tier E) to severe impairment (Tier A)."
 )
 
-net_path = figure_path("cascade_network.png")
-if net_path:
-    st.image(str(net_path), use_container_width=True,
-             caption="Steepest (red), Predominant (blue), Fastest (green)")
+svg_path = figure_path("cascade_network.svg")
+if svg_path:
+    with open(str(svg_path)) as f:
+        svg = f.read()
+    svg = svg.replace("<svg ", '<svg style="width:100%; height:auto; max-width:900px;" ', 1)
+    st.markdown(
+        f'<div style="width:100%; display:flex; justify-content:center;">{svg}</div>',
+        unsafe_allow_html=True,
+    )
+    st.caption("Steepest (red), Predominant (blue), Fastest (green)")
+else:
+    net_path = figure_path("cascade_network.png")
+    if net_path:
+        st.image(str(net_path), use_container_width=True,
+                 caption="Steepest (red), Predominant (blue), Fastest (green)")
 
 # ── Interactive network ────────────────────────────────────────
 with st.expander("Interactive cascade explorer"):
