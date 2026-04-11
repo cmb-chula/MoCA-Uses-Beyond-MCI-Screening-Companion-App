@@ -40,6 +40,13 @@ else:
         st.image(str(net_path), use_container_width=True,
                  caption="Steepest (red), Predominant (blue), Fastest (green)")
 
+# ── Animated pathway walkthrough ──────────────────────────────
+from pathlib import Path
+video_path = Path(__file__).parent.parent / "data" / "videos" / "CascadePathways.mp4"
+if video_path.exists():
+    with st.expander("Animated pathway walkthrough"):
+        st.video(str(video_path))
+
 # ── Interactive network ────────────────────────────────────────
 with st.expander("Interactive cascade explorer"):
     if info and trans:
