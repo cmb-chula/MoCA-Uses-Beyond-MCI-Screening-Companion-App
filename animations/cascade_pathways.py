@@ -66,7 +66,7 @@ class CascadePathways(Scene):
         self.play(Write(title), run_time=1)
 
         # ── Tier bands ────────────────────────────────────────
-        bands = VGroup()
+        bands = Group()
         for tier in "EDCBA":
             band = Rectangle(
                 width=12, height=1.2,
@@ -86,7 +86,7 @@ class CascadePathways(Scene):
 
         # ── Nodes ─────────────────────────────────────────────
         nodes = {}
-        node_group = VGroup()
+        node_group = Group()
         for sub, p in pos.items():
             tier = sub[-1]
             circle = Circle(
@@ -175,7 +175,7 @@ class CascadePathways(Scene):
         ).to_edge(DOWN, buff=0.4)
         self.play(FadeIn(all_label), run_time=0.4)
 
-        all_edges = VGroup()
+        all_edges = Group()
         for pw_name, pw_data in PATHWAYS.items():
             pw_nodes = pw_data["nodes"]
             pw_color = pw_data["color"]
@@ -197,11 +197,11 @@ class CascadePathways(Scene):
                 ).move_to(pos[sub])
                 all_edges.add(glow)
 
-        self.play(Create(all_edges), run_time=2)
+        self.play(FadeIn(all_edges), run_time=2)
         self.wait(2)
 
         # Legend
-        legend = VGroup()
+        legend = Group()
         for i, (pw_name, pw_data) in enumerate(PATHWAYS.items()):
             dot = Dot(color=pw_data["color"], radius=0.08).shift(LEFT * 2 + DOWN * (3.5 + i * 0.3))
             txt = Text(
@@ -211,4 +211,4 @@ class CascadePathways(Scene):
             legend.add(dot, txt)
         self.play(FadeIn(legend), run_time=0.5)
         self.wait(2)
-        self.play(FadeOut(VGroup(*self.mobjects)), run_time=1)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=1)

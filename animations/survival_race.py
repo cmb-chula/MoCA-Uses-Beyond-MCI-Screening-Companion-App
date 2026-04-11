@@ -113,7 +113,7 @@ class SurvivalRace(Scene):
         ).rotate(PI / 2).next_to(ax, LEFT, buff=0.4)
 
         # Grid lines
-        grid = VGroup()
+        grid = Group()
         for y_val in [0.25, 0.5, 0.75, 1.0]:
             line = DashedLine(
                 ax.c2p(0, y_val), ax.c2p(10, y_val),
@@ -173,7 +173,7 @@ class SurvivalRace(Scene):
         self.wait(0.5)
 
         # ── Labels at curve endpoints ─────────────────────────
-        legend = VGroup()
+        legend = Group()
         for i, (pw_name, pw_d) in enumerate(pw_data.items()):
             t_arr = pw_d["time"]
             s_arr = pw_d["survival"]
@@ -203,4 +203,4 @@ class SurvivalRace(Scene):
         ).to_edge(DOWN, buff=0.3)
         self.play(Write(highlight), run_time=0.6)
         self.wait(2)
-        self.play(FadeOut(VGroup(*self.mobjects)), run_time=1)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=1)

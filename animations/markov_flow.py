@@ -73,7 +73,7 @@ class MarkovFlow(Scene):
 
         # ── Nodes ─────────────────────────────────────────────
         node_mobs = {}
-        node_group = VGroup()
+        node_group = Group()
         for sub in CASCADE:
             if sub not in pos:
                 continue
@@ -97,7 +97,7 @@ class MarkovFlow(Scene):
         self.wait(0.5)
 
         # ── Static edge skeleton ──────────────────────────────
-        edge_group = VGroup()
+        edge_group = Group()
         for src, tgt, prob in TRANSITIONS:
             if src not in pos or tgt not in pos:
                 continue
@@ -124,7 +124,7 @@ class MarkovFlow(Scene):
 
             # Create multiple particles for thicker flows
             n_particles = max(1, int(prob * 20))
-            particles = VGroup()
+            particles = Group()
             for k in range(n_particles):
                 dot = Dot(
                     point=p0 + DOWN * 0.32,
@@ -183,4 +183,4 @@ class MarkovFlow(Scene):
             run_time=0.6,
         )
         self.wait(2)
-        self.play(FadeOut(VGroup(*self.mobjects)), run_time=1)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=1)

@@ -17,3 +17,7 @@ streamlit.log
 # IDE
 .vscode/
 .idea/
+
+# Manim build artifacts
+animations/media/
+animations/.venv_manim/

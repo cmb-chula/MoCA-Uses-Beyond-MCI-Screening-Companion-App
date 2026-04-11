@@ -54,7 +54,7 @@ def make_radar_polygon(values, center, radius, color, opacity=0.4):
 
 def make_radar_axes(center, radius):
     """Create radar grid circles and axis lines."""
-    group = VGroup()
+    group = Group()
     # Concentric circles
     for frac in [0.25, 0.5, 0.75, 1.0]:
         circ = Circle(
@@ -81,7 +81,7 @@ def make_radar_axes(center, radius):
 
 def make_radar_labels(center, radius):
     """Create domain name labels around the radar."""
-    group = VGroup()
+    group = Group()
     n = len(DOMAIN_LABELS)
     angles = np.linspace(np.pi / 2, np.pi / 2 + 2 * np.pi, n, endpoint=False)
     for label, a in zip(DOMAIN_LABELS, angles):
@@ -174,4 +174,4 @@ class RadarMorphing(Scene):
         ).next_to(final_box, DOWN, buff=0.2)
         self.play(Create(final_box), Write(final_text), run_time=0.8)
         self.wait(2)
-        self.play(FadeOut(VGroup(*self.mobjects)), run_time=1)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=1)
