@@ -55,14 +55,12 @@ def make_radar_polygon(values, center, radius, color, opacity=0.4):
 def make_radar_axes(center, radius):
     """Create radar grid circles and axis lines."""
     group = Group()
-    # Concentric circles
     for frac in [0.25, 0.5, 0.75, 1.0]:
         circ = Circle(
             radius=radius * frac, stroke_color="#cccccc",
             stroke_width=0.8, stroke_opacity=0.5,
         ).move_to(center)
         group.add(circ)
-    # Axis lines
     n = len(DOMAINS)
     angles = np.linspace(np.pi / 2, np.pi / 2 + 2 * np.pi, n, endpoint=False)
     for a in angles:
@@ -71,7 +69,6 @@ def make_radar_axes(center, radius):
             stroke_color="#cccccc", stroke_width=0.8, stroke_opacity=0.5,
         )
         group.add(line)
-    # Outer boundary
     outer = Circle(
         radius=radius, stroke_color="#666666", stroke_width=1.5,
     ).move_to(center)
@@ -86,11 +83,11 @@ def make_radar_labels(center, radius):
     angles = np.linspace(np.pi / 2, np.pi / 2 + 2 * np.pi, n, endpoint=False)
     for label, a in zip(DOMAIN_LABELS, angles):
         pos = center + np.array([
-            (radius + 0.45) * np.cos(a),
-            (radius + 0.35) * np.sin(a),
+            (radius + 0.4) * np.cos(a),
+            (radius + 0.3) * np.sin(a),
             0,
         ])
-        txt = Text(label, font_size=14, color="#333333", font="Arial").move_to(pos)
+        txt = Text(label, font_size=12, color="#333333", font="Arial").move_to(pos)
         group.add(txt)
     return group
 
@@ -98,14 +95,14 @@ def make_radar_labels(center, radius):
 class RadarMorphing(Scene):
     def construct(self):
         self.camera.background_color = "#FFFFFF"
-        center = ORIGIN
-        radius = 2.2
+        center = DOWN * 0.2  # shift radar slightly down to make room for title
+        radius = 2.0  # slightly smaller to fit labels
 
         # Title
         title = Text(
             "Steepest Decline: Domain Profile Collapse",
-            font_size=30, color="#C62828", font="Arial", weight=BOLD,
-        ).to_edge(UP, buff=0.3)
+            font_size=28, color="#C62828", font="Arial", weight=BOLD,
+        ).to_edge(UP, buff=0.25)
         self.play(Write(title), run_time=0.8)
 
         # Radar axes and labels
@@ -123,12 +120,12 @@ class RadarMorphing(Scene):
 
         # Subtype label
         sub_label = Text(
-            first, font_size=28, color=color, font="Arial", weight=BOLD,
-        ).to_edge(DOWN, buff=0.8)
+            first, font_size=24, color=color, font="Arial", weight=BOLD,
+        ).to_edge(DOWN, buff=0.6)
         stage_label = Text(
-            f"Tier {tier} — {TIER_STAGES[tier]}",
-            font_size=18, color="#666666", font="Arial",
-        ).next_to(sub_label, DOWN, buff=0.1)
+            f"Tier {tier} \u2014 {TIER_STAGES[tier]}",
+            font_size=16, color="#666666", font="Arial",
+        ).next_to(sub_label, DOWN, buff=0.08)
 
         self.play(Create(polygon), FadeIn(sub_label), FadeIn(stage_label), run_time=1)
         self.wait(1)
@@ -143,17 +140,12 @@ class RadarMorphing(Scene):
                 PATHWAY_PROFILES[sub], center, radius, color, opacity=0.5,
             )
             new_sub_label = Text(
-                sub, font_size=28, color=color, font="Arial", weight=BOLD,
-            ).to_edge(DOWN, buff=0.8)
+                sub, font_size=24, color=color, font="Arial", weight=BOLD,
+            ).to_edge(DOWN, buff=0.6)
             new_stage_label = Text(
-                f"Tier {tier} — {TIER_STAGES[tier]}",
-                font_size=18, color="#666666", font="Arial",
-            ).next_to(new_sub_label, DOWN, buff=0.1)
-
-            # Arrow showing transition
-            arrow_txt = Text(
-                "→", font_size=40, color="#C62828", font="Arial",
-            ).move_to(center + RIGHT * 3.5)
+                f"Tier {tier} \u2014 {TIER_STAGES[tier]}",
+                font_size=16, color="#666666", font="Arial",
+            ).next_to(new_sub_label, DOWN, buff=0.08)
 
             self.play(
                 Transform(polygon, new_polygon),
@@ -166,12 +158,12 @@ class RadarMorphing(Scene):
 
         # Final hold — severe impairment
         final_box = SurroundingRectangle(
-            polygon, color="#1E88E5", buff=0.3, stroke_width=2,
+            polygon, color="#1E88E5", buff=0.2, stroke_width=2,
         )
         final_text = Text(
-            "Severe Impairment", font_size=22, color="#1E88E5",
+            "Severe Impairment", font_size=20, color="#1E88E5",
             font="Arial", weight=BOLD,
-        ).next_to(final_box, DOWN, buff=0.2)
+        ).next_to(final_box, RIGHT, buff=0.2)
         self.play(Create(final_box), Write(final_text), run_time=0.8)
         self.wait(2)
         self.play(FadeOut(Group(*self.mobjects)), run_time=1)

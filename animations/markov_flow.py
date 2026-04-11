@@ -7,7 +7,7 @@ from manim import *
 import numpy as np
 
 # ── Data ──────────────────────────────────────────────────────────
-TIER_Y = {"E": 3.0, "D": 1.5, "C": 0.0, "B": -1.5, "A": -3.0}
+TIER_Y = {"E": 2.4, "D": 1.2, "C": 0.0, "B": -1.2, "A": -2.4}
 TIER_COLORS = {
     "E": "#7E57C2", "D": "#E53935", "C": "#43A047",
     "B": "#FB8C00", "A": "#1E88E5",
@@ -24,7 +24,7 @@ SUBTYPES_BY_TIER = {
     "A": ["0A"],
 }
 
-X_SPACING = {"A": 2.0, "B": 2.0, "C": 2.5, "D": 2.0, "E": 2.5}
+X_SPACING = {"A": 2.0, "B": 1.8, "C": 2.2, "D": 1.8, "E": 2.2}
 
 # Key transition probabilities (from transition_matrix.json, simplified)
 TRANSITIONS = [
@@ -67,8 +67,8 @@ class MarkovFlow(Scene):
 
         title = Text(
             "Markov Transition Flow: Cascade Subtypes",
-            font_size=30, color="#1B5E4E", font="Arial", weight=BOLD,
-        ).to_edge(UP, buff=0.3)
+            font_size=28, color="#1B5E4E", font="Arial", weight=BOLD,
+        ).to_edge(UP, buff=0.25)
         self.play(Write(title), run_time=0.8)
 
         # ── Nodes ─────────────────────────────────────────────
@@ -80,16 +80,16 @@ class MarkovFlow(Scene):
             p = pos[sub]
             tier = sub[-1]
             circle = Circle(
-                radius=0.3, fill_color=TIER_COLORS[tier],
+                radius=0.28, fill_color=TIER_COLORS[tier],
                 fill_opacity=0.6, stroke_color=TIER_COLORS[tier],
                 stroke_width=2,
             ).move_to(p)
-            txt = Text(sub, font_size=14, color="#FFFFFF", font="Arial", weight=BOLD).move_to(p)
-            # Sojourn label
+            txt = Text(sub, font_size=12, color="#FFFFFF", font="Arial", weight=BOLD).move_to(p)
+            # Sojourn label below
             soj = SOJOURN.get(sub, 0)
             soj_txt = Text(
-                f"{soj:.1f}y", font_size=10, color="#666666", font="Arial",
-            ).next_to(circle, DOWN, buff=0.08)
+                f"{soj:.1f}y", font_size=9, color="#666666", font="Arial",
+            ).next_to(circle, DOWN, buff=0.06)
             node_mobs[sub] = circle
             node_group.add(circle, txt, soj_txt)
 
@@ -102,9 +102,9 @@ class MarkovFlow(Scene):
             if src not in pos or tgt not in pos:
                 continue
             p0, p1 = pos[src], pos[tgt]
-            width = 0.5 + prob * 15  # scale width by probability
+            width = 0.5 + prob * 12  # scale width by probability
             edge = Line(
-                p0 + DOWN * 0.32, p1 + UP * 0.32,
+                p0 + DOWN * 0.3, p1 + UP * 0.3,
                 stroke_color="#cccccc", stroke_width=width,
                 stroke_opacity=0.3,
             )
@@ -112,7 +112,6 @@ class MarkovFlow(Scene):
         self.play(FadeIn(edge_group), run_time=0.6)
 
         # ── Animate flow particles ────────────────────────────
-        # Send colored dots along highest-probability edges
         top_transitions = sorted(TRANSITIONS, key=lambda x: -x[2])[:8]
 
         for src, tgt, prob in top_transitions:
@@ -122,28 +121,26 @@ class MarkovFlow(Scene):
             tier = src[-1]
             color = TIER_COLORS[tier]
 
-            # Create multiple particles for thicker flows
-            n_particles = max(1, int(prob * 20))
+            n_particles = max(1, int(prob * 15))
             particles = Group()
             for k in range(n_particles):
                 dot = Dot(
-                    point=p0 + DOWN * 0.32,
-                    radius=0.06 + prob * 0.15,
+                    point=p0 + DOWN * 0.3,
+                    radius=0.05 + prob * 0.12,
                     color=color, fill_opacity=0.7,
                 )
                 particles.add(dot)
 
-            # Stagger particle movement
             anims = []
             for k, dot in enumerate(particles):
                 offset = np.array([
-                    np.random.uniform(-0.08, 0.08),
+                    np.random.uniform(-0.06, 0.06),
                     np.random.uniform(-0.02, 0.02),
                     0,
                 ])
                 anims.append(
                     dot.animate(rate_func=smooth, run_time=0.8).move_to(
-                        p1 + UP * 0.32 + offset
+                        p1 + UP * 0.3 + offset
                     )
                 )
 
@@ -152,7 +149,7 @@ class MarkovFlow(Scene):
 
             # Glow target node
             pulse = Circle(
-                radius=0.4, stroke_color=color, stroke_width=3,
+                radius=0.38, stroke_color=color, stroke_width=3,
                 fill_opacity=0,
             ).move_to(pos[tgt])
             self.play(
@@ -165,19 +162,18 @@ class MarkovFlow(Scene):
 
         self.wait(1)
 
-        # ── Final: all flows simultaneously ───────────────────
+        # ── Final label ───────────────────────────────────────
         all_label = Text(
             "Probability flows concentrate toward S-0A (Severe)",
-            font_size=20, color="#1E88E5", font="Arial",
-        ).to_edge(DOWN, buff=0.3)
+            font_size=18, color="#1E88E5", font="Arial",
+        ).to_edge(DOWN, buff=0.25)
         self.play(FadeIn(all_label), run_time=0.5)
 
         # Highlight 0A
         glow_0a = Circle(
-            radius=0.45, fill_color="#1E88E5", fill_opacity=0.8,
+            radius=0.4, fill_color="#1E88E5", fill_opacity=0.8,
             stroke_color="#FFFFFF", stroke_width=3,
         ).move_to(pos["0A"])
-        txt_0a = Text("0A", font_size=18, color="#FFFFFF", font="Arial", weight=BOLD).move_to(pos["0A"])
         self.play(
             Transform(node_mobs["0A"], glow_0a),
             run_time=0.6,
