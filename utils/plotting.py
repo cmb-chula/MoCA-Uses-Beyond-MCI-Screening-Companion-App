@@ -226,15 +226,12 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     y_labels = [f"S-{s}" for s in subs]
     x_labels = [DOMAIN_LABELS[d] for d in DOMAINS]
 
-    # Heatmap
+    # Heatmap (no built-in text — we add per-cell annotations for color control)
     fig = go.Figure()
     fig.add_trace(go.Heatmap(
         z=z_med,
         x=x_labels,
         y=y_labels,
-        text=text_vals,
-        texttemplate="%{text}",
-        textfont={"size": 10, "color": "#333"},
         colorscale=[
             [0.0, "#a50026"], [0.2, "#d73027"], [0.4, "#fdae61"],
             [0.6, "#fee08b"], [0.75, "#d9ef8b"], [0.9, "#66bd63"], [1.0, "#006837"],
@@ -278,6 +275,22 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     # Tier band shapes + annotations (far-left column, separate from subtype axis labels)
     shapes = []
     annotations = []
+
+    # Per-cell value labels with color that adapts to background
+    for i in range(n_rows):
+        for j in range(n_cols):
+            v = z_med[i, j]
+            if np.isnan(v):
+                continue
+            # White text on dark ends (<0.25 red, >0.75 green), black on light middle
+            txt_color = "white" if (v < 0.28 or v > 0.78) else "#222"
+            annotations.append(dict(
+                x=x_labels[j], y=y_labels[i],
+                xref="x", yref="y",
+                text=f"{v:.2f}",
+                showarrow=False,
+                font=dict(size=10, color=txt_color, family="Arial"),
+            ))
     tier_ranges = {}
     for i, sub in enumerate(subs):
         t = sub[-1]
@@ -285,11 +298,11 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         tier_ranges[t][1] = i
 
     # Layout in paper x-coords (paper 0 = left plot edge; negative = margin):
-    #   [ tier band (letter + stage) ]  [ S-xx ticks ]  [ heatmap ]
-    #   -0.22..-0.04                     auto           0..1
-    # All tier info (letter, MoCA range, stage) lives INSIDE the colored band
-    # so it never collides with the subtype axis labels at any screen width.
-    BAND_X0, BAND_X1 = -0.22, -0.04
+    #   [ tier band ]     [ S-xx ticks ]  [ heatmap ]
+    #   -0.38..-0.15       -0.15..0       0..1
+    # Band sits in the far-left margin so it never overlaps with the
+    # subtype axis tick labels (which Plotly places close to x=0).
+    BAND_X0, BAND_X1 = -0.38, -0.15
 
     for tier in "EDCBA":
         if tier not in tier_ranges:
@@ -334,7 +347,7 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     fig.update_layout(
         title=title,
         height=max(520, 26 * n_rows + 100),
-        margin=dict(l=180, r=80, t=70, b=60),
+        margin=dict(l=220, r=80, t=70, b=60),
         xaxis=dict(
             side="top",
             tickfont=dict(size=11),
