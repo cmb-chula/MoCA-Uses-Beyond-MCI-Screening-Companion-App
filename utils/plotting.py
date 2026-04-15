@@ -285,46 +285,39 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         tier_ranges[t][1] = i
 
     # Layout in paper x-coords (paper 0 = left plot edge; negative = margin):
-    #   [ tier band ]  [ tier label ]  [ S-xx ticks ]  [ heatmap ]
-    #   -0.36..-0.22    -0.22..-0.04   auto            0..1
-    BAND_X0, BAND_X1 = -0.36, -0.22
-    LABEL_X = -0.13
+    #   [ tier band (letter + stage) ]  [ S-xx ticks ]  [ heatmap ]
+    #   -0.22..-0.04                     auto           0..1
+    # All tier info (letter, MoCA range, stage) lives INSIDE the colored band
+    # so it never collides with the subtype axis labels at any screen width.
+    BAND_X0, BAND_X1 = -0.22, -0.04
 
     for tier in "EDCBA":
         if tier not in tier_ranges:
             continue
         lo, hi = tier_ranges[tier]
         color = TIER_COLORS.get(tier, "#888")
-        # Solid colored band strip
         shapes.append(dict(
             type="rect",
             xref="paper", yref="y",
             x0=BAND_X0, x1=BAND_X1,
             y0=lo - 0.5, y1=hi + 0.5,
-            fillcolor=color, opacity=0.85,
+            fillcolor=color, opacity=0.92,
             line=dict(width=0),
             layer="above",
         ))
         y_center = (lo + hi) / 2
-        # Tier letter inside the band (white on colored bg)
+        # All labels inside the band, stacked vertically
         annotations.append(dict(
             xref="paper", yref="y",
             x=(BAND_X0 + BAND_X1) / 2, y=y_center,
-            text=f"<b>{tier}</b>",
+            text=(
+                f"<b style='font-size:18px'>{tier}</b><br>"
+                f"<span style='font-size:10px'>{TIER_NAMES.get(tier, '')}</span><br>"
+                f"<span style='font-size:9px;opacity:0.9'>{TIER_STAGES.get(tier, '')}</span>"
+            ),
             showarrow=False,
-            font=dict(size=18, color="white", family="Arial"),
+            font=dict(color="white", family="Arial"),
             align="center",
-        ))
-        # Tier name + stage to the right of the band
-        annotations.append(dict(
-            xref="paper", yref="y",
-            x=LABEL_X, y=y_center,
-            text=f"<b style='color:{color}'>{TIER_NAMES.get(tier, '')}</b><br>"
-                 f"<span style='font-size:9px;color:#666'>{TIER_STAGES.get(tier, '')}</span>",
-            showarrow=False,
-            font=dict(size=11, family="Arial"),
-            align="left",
-            xanchor="left",
         ))
 
     # n= labels on the right
@@ -341,7 +334,7 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     fig.update_layout(
         title=title,
         height=max(520, 26 * n_rows + 100),
-        margin=dict(l=260, r=90, t=70, b=60),
+        margin=dict(l=180, r=80, t=70, b=60),
         xaxis=dict(
             side="top",
             tickfont=dict(size=11),
