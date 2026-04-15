@@ -183,6 +183,169 @@ def forest_plot(cox: dict, model_name: str, title: str = "") -> go.Figure:
     return apply_plotly_style(fig)
 
 
+def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
+    """Domain score heatmap across all subtypes, grouped by tier.
+
+    Rows = subtypes (sorted E→A top to bottom, 0→x within tier).
+    Cols = 7 domains. Color = median (RdYlGn). Dot size = IQR spread.
+    """
+    from utils.styling import TIER_COLORS, TIER_NAMES, TIER_STAGES
+
+    # Sort subtypes: tier E→A, then numeric index ascending
+    _tier_ord = {"E": 0, "D": 1, "C": 2, "B": 3, "A": 4}
+    subs = sorted(
+        profiles.keys(),
+        key=lambda s: (_tier_ord.get(s[-1], 9), int(s[:-1]) if s[:-1].isdigit() else 0),
+    )
+
+    n_rows = len(subs)
+    n_cols = len(DOMAINS)
+
+    # Build matrices
+    z_med = np.full((n_rows, n_cols), np.nan)
+    iqr = np.full((n_rows, n_cols), 0.0)
+    text_vals = [["" for _ in range(n_cols)] for _ in range(n_rows)]
+    hover = [["" for _ in range(n_cols)] for _ in range(n_rows)]
+
+    for i, sub in enumerate(subs):
+        pr = profiles[sub]
+        for j, d in enumerate(DOMAINS):
+            dd = pr["domains"].get(d, {})
+            med = dd.get("median", np.nan)
+            q1 = dd.get("q1", med)
+            q3 = dd.get("q3", med)
+            z_med[i, j] = med
+            iqr[i, j] = max(0, (q3 - q1))
+            text_vals[i][j] = f"{med:.2f}" if not np.isnan(med) else ""
+            hover[i][j] = (
+                f"S-{sub} \u2014 {DOMAIN_LABELS[d]}<br>"
+                f"Median: {med:.2f}<br>IQR: {q1:.2f}\u2013{q3:.2f}<br>"
+                f"n={pr.get('n', 0)}"
+            )
+
+    y_labels = [f"S-{s}" for s in subs]
+    x_labels = [DOMAIN_LABELS[d] for d in DOMAINS]
+
+    # Heatmap
+    fig = go.Figure()
+    fig.add_trace(go.Heatmap(
+        z=z_med,
+        x=x_labels,
+        y=y_labels,
+        text=text_vals,
+        texttemplate="%{text}",
+        textfont={"size": 10, "color": "#333"},
+        colorscale=[
+            [0.0, "#a50026"], [0.2, "#d73027"], [0.4, "#fdae61"],
+            [0.6, "#fee08b"], [0.75, "#d9ef8b"], [0.9, "#66bd63"], [1.0, "#006837"],
+        ],
+        zmin=0, zmax=1,
+        hovertext=hover,
+        hovertemplate="%{hovertext}<extra></extra>",
+        colorbar=dict(
+            title=dict(text="Median<br>domain<br>score", font=dict(size=11)),
+            tickvals=[0, 0.25, 0.5, 0.75, 1.0],
+            ticktext=["0.0<br>Impaired", "0.25", "0.5", "0.75", "1.0<br>Preserved"],
+            tickfont=dict(size=10),
+            len=0.9,
+            thickness=14,
+        ),
+    ))
+
+    # Dot overlay — size proportional to IQR (larger dot = more variability)
+    xs, ys, sizes, hovers = [], [], [], []
+    for i in range(n_rows):
+        for j in range(n_cols):
+            v = iqr[i, j]
+            if v > 0:
+                xs.append(x_labels[j])
+                ys.append(y_labels[i])
+                sizes.append(4 + v * 18)
+                hovers.append(f"IQR: {v:.2f}")
+    fig.add_trace(go.Scatter(
+        x=xs, y=ys,
+        mode="markers",
+        marker=dict(
+            size=sizes,
+            color="rgba(30,30,30,0.35)",
+            line=dict(width=0),
+        ),
+        hovertext=hovers,
+        hovertemplate="%{hovertext}<extra></extra>",
+        showlegend=False,
+    ))
+
+    # Tier band shapes + annotations (left side)
+    shapes = []
+    annotations = []
+    # y-axis in plotly heatmap: first row is y=0 (at bottom when reversed)
+    # We want tier E at top. Since the heatmap uses category labels in the order given,
+    # and yaxis.autorange='reversed' flips them, row 0 (first sub, tier E) appears at top.
+    tier_ranges = {}
+    for i, sub in enumerate(subs):
+        t = sub[-1]
+        tier_ranges.setdefault(t, [i, i])
+        tier_ranges[t][1] = i
+
+    for tier in "EDCBA":
+        if tier not in tier_ranges:
+            continue
+        lo, hi = tier_ranges[tier]
+        color = TIER_COLORS.get(tier, "#888")
+        # Paper-space band on the left of the heatmap
+        shapes.append(dict(
+            type="rect",
+            xref="paper", yref="y",
+            x0=-0.32, x1=-0.02,
+            y0=lo - 0.5, y1=hi + 0.5,
+            fillcolor=color, opacity=0.12,
+            line=dict(color=color, width=1.5),
+            layer="below",
+        ))
+        y_center = (lo + hi) / 2
+        annotations.append(dict(
+            xref="paper", yref="y",
+            x=-0.17, y=y_center,
+            text=f"<b>{TIER_NAMES.get(tier, '')}</b><br>"
+                 f"<span style='font-size:10px;color:{color}'>{TIER_STAGES.get(tier, '')}</span>",
+            showarrow=False,
+            font=dict(size=11, color=color, family="Arial"),
+            align="center",
+        ))
+
+    # n= labels on the right
+    for i, sub in enumerate(subs):
+        annotations.append(dict(
+            xref="paper", yref="y",
+            x=1.02, y=i,
+            text=f"<span style='font-size:9px;color:#888'>n={profiles[sub].get('n', 0)}</span>",
+            showarrow=False,
+            align="left",
+        ))
+
+    fig.update_layout(
+        title=title,
+        height=max(500, 28 * n_rows + 80),
+        margin=dict(l=180, r=60, t=60, b=80),
+        xaxis=dict(
+            side="top",
+            tickfont=dict(size=11),
+            showgrid=False,
+            zeroline=False,
+        ),
+        yaxis=dict(
+            autorange="reversed",
+            tickfont=dict(size=10),
+            showgrid=False,
+            zeroline=False,
+        ),
+        shapes=shapes,
+        annotations=annotations,
+        plot_bgcolor="white",
+    )
+    return apply_plotly_style(fig)
+
+
 def transition_heatmap(trans: dict, subtypes: list[str], title: str = "") -> go.Figure:
     """Create a transition probability heatmap."""
     n = len(subtypes)

@@ -4,7 +4,7 @@ import streamlit as st
 
 from utils.sidebar import render_sidebar
 from utils.data_loader import load_domain_profiles, load_pathway_info, show_data_missing
-from utils.plotting import radar_chart, grouped_bar_chart
+from utils.plotting import radar_chart, grouped_bar_chart, domain_tier_heatmap
 from utils.styling import TIER_NAMES, TIER_STAGES
 
 render_sidebar()
@@ -18,6 +18,17 @@ tier_filter = st.session_state.get("tier_filter")
 if profiles is None:
     show_data_missing("Domain profiles")
     st.stop()
+
+# ── Overview heatmap: all subtypes × 7 domains ─────────────────
+st.subheader("All Subtypes \u00d7 Domains Overview")
+st.markdown(
+    "Median normalized domain score for every subtype, grouped by MoCA tier. "
+    "Color encodes preserved (green) \u2192 impaired (red); dot size scales with IQR (variability)."
+)
+heatmap_fig = domain_tier_heatmap(profiles)
+st.plotly_chart(heatmap_fig, use_container_width=True, config={"responsive": True})
+
+st.divider()
 
 # ── Organize subtypes by tier ───────────────────────────────────
 tier_subtypes = {}
