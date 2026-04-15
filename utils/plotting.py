@@ -275,41 +275,42 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         showlegend=False,
     ))
 
-    # Tier band shapes + annotations (left side)
+    # Tier band shapes + annotations (far-left column, separate from subtype axis labels)
     shapes = []
     annotations = []
-    # y-axis in plotly heatmap: first row is y=0 (at bottom when reversed)
-    # We want tier E at top. Since the heatmap uses category labels in the order given,
-    # and yaxis.autorange='reversed' flips them, row 0 (first sub, tier E) appears at top.
     tier_ranges = {}
     for i, sub in enumerate(subs):
         t = sub[-1]
         tier_ranges.setdefault(t, [i, i])
         tier_ranges[t][1] = i
 
+    # Layout in paper x-coords:
+    #   [ tier band + label ]  [ S-xx tick labels ]  [ heatmap cells ]  [ n= labels ]
+    #   -0.28 .... -0.08        (auto, ~-0.07..0)     0 .. 1             1.02+
+    TIER_X0, TIER_X1 = -0.28, -0.10
+
     for tier in "EDCBA":
         if tier not in tier_ranges:
             continue
         lo, hi = tier_ranges[tier]
         color = TIER_COLORS.get(tier, "#888")
-        # Paper-space band on the left of the heatmap
         shapes.append(dict(
             type="rect",
             xref="paper", yref="y",
-            x0=-0.32, x1=-0.02,
+            x0=TIER_X0, x1=TIER_X1,
             y0=lo - 0.5, y1=hi + 0.5,
             fillcolor=color, opacity=0.12,
-            line=dict(color=color, width=1.5),
+            line=dict(color=color, width=1.2),
             layer="below",
         ))
         y_center = (lo + hi) / 2
         annotations.append(dict(
             xref="paper", yref="y",
-            x=-0.17, y=y_center,
+            x=(TIER_X0 + TIER_X1) / 2, y=y_center,
             text=f"<b>{TIER_NAMES.get(tier, '')}</b><br>"
-                 f"<span style='font-size:10px;color:{color}'>{TIER_STAGES.get(tier, '')}</span>",
+                 f"<span style='font-size:9px;color:{color}'>{TIER_STAGES.get(tier, '')}</span>",
             showarrow=False,
-            font=dict(size=11, color=color, family="Arial"),
+            font=dict(size=10, color=color, family="Arial"),
             align="center",
         ))
 
@@ -317,27 +318,31 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     for i, sub in enumerate(subs):
         annotations.append(dict(
             xref="paper", yref="y",
-            x=1.02, y=i,
+            x=1.015, y=i,
             text=f"<span style='font-size:9px;color:#888'>n={profiles[sub].get('n', 0)}</span>",
             showarrow=False,
             align="left",
+            xanchor="left",
         ))
 
     fig.update_layout(
         title=title,
-        height=max(500, 28 * n_rows + 80),
-        margin=dict(l=180, r=60, t=60, b=80),
+        height=max(520, 26 * n_rows + 100),
+        margin=dict(l=220, r=90, t=70, b=60),
         xaxis=dict(
             side="top",
             tickfont=dict(size=11),
             showgrid=False,
             zeroline=False,
+            ticks="",
         ),
         yaxis=dict(
             autorange="reversed",
-            tickfont=dict(size=10),
+            tickfont=dict(size=10, color="#555"),
             showgrid=False,
             zeroline=False,
+            ticks="",
+            automargin=False,
         ),
         shapes=shapes,
         annotations=annotations,
