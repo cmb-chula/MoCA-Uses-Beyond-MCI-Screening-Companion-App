@@ -227,8 +227,8 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     # that INCLUDES the n= count so we avoid a separate right-side column.
     y_labels = [f"S-{s}" for s in subs]
     y_ticktext = [
-        (f"<b style='color:{TIER_COLORS.get(s[-1], '#333')}'>S-{s}</b>"
-         f"<span style='color:#888;font-size:9px'>  n={profiles[s].get('n', 0)}</span>")
+        (f"<b style='color:{TIER_COLORS.get(s[-1], '#333')}'>S-{s}</b><br>"
+         f"<span style='color:#888;font-size:9px'>n={profiles[s].get('n', 0)}</span>")
         for s in subs
     ]
     x_labels = [DOMAIN_LABELS[d] for d in DOMAINS]
@@ -308,8 +308,8 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
 
     fig.update_layout(
         title=title,
-        height=max(520, 26 * n_rows + 100),
-        margin=dict(l=110, r=100, t=70, b=60),
+        height=max(560, 30 * n_rows + 100),
+        margin=dict(l=90, r=100, t=70, b=60),
         xaxis=dict(
             side="top",
             tickfont=dict(size=11),
