@@ -223,11 +223,12 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
                 f"n={pr.get('n', 0)}"
             )
 
-    # Use raw S-xx strings as y categories (used by Scatter overlay + annotations);
-    # the axis will display HTML-colored tick labels matching the tier color.
+    # Use raw S-xx strings as y categories; display HTML-colored tick text
+    # that INCLUDES the n= count so we avoid a separate right-side column.
     y_labels = [f"S-{s}" for s in subs]
     y_ticktext = [
-        f"<b style='color:{TIER_COLORS.get(s[-1], '#333')}'>S-{s}</b>"
+        (f"<b style='color:{TIER_COLORS.get(s[-1], '#333')}'>S-{s}</b>"
+         f"<span style='color:#888;font-size:9px'>  n={profiles[s].get('n', 0)}</span>")
         for s in subs
     ]
     x_labels = [DOMAIN_LABELS[d] for d in DOMAINS]
@@ -246,14 +247,14 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         hovertext=hover,
         hovertemplate="%{hovertext}<extra></extra>",
         colorbar=dict(
-            title=dict(text="Median<br>domain<br>score", font=dict(size=11)),
+            title=dict(text="Median score", font=dict(size=11), side="right"),
             tickvals=[0, 0.25, 0.5, 0.75, 1.0],
-            ticktext=["0.0<br>Impaired", "0.25", "0.5", "0.75", "1.0<br>Preserved"],
+            ticktext=["Impaired", "0.25", "0.50", "0.75", "Preserved"],
             tickfont=dict(size=10),
-            len=0.9,
+            len=0.85,
             thickness=14,
-            x=1.08,
-            xpad=0,
+            x=1.02,
+            xpad=4,
         ),
     ))
 
@@ -303,22 +304,12 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         tier_ranges.setdefault(t, [i, i])
         tier_ranges[t][1] = i
 
-    # n= labels on the right (tier-colored, right-aligned)
-    for i, sub in enumerate(subs):
-        color = TIER_COLORS.get(sub[-1], "#888")
-        annotations.append(dict(
-            xref="paper", yref="y",
-            x=1.01, y=i,
-            text=f"<span style='font-size:9px;color:{color}'>n={profiles[sub].get('n', 0)}</span>",
-            showarrow=False,
-            align="left",
-            xanchor="left",
-        ))
+    # (n= counts are now embedded in the y-axis tick labels)
 
     fig.update_layout(
         title=title,
         height=max(520, 26 * n_rows + 100),
-        margin=dict(l=80, r=140, t=70, b=60),
+        margin=dict(l=110, r=100, t=70, b=60),
         xaxis=dict(
             side="top",
             tickfont=dict(size=11),
