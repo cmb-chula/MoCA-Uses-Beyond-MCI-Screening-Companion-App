@@ -189,7 +189,7 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     Rows = subtypes (sorted E→A top to bottom, 0→x within tier).
     Cols = 7 domains. Color = median (RdYlGn). Dot size = IQR spread.
     """
-    from utils.styling import TIER_COLORS, TIER_NAMES, TIER_STAGES
+    from utils.styling import TIER_COLORS
 
     # Sort subtypes: tier E→A, then numeric index ascending
     _tier_ord = {"E": 0, "D": 1, "C": 2, "B": 3, "A": 4}
@@ -223,7 +223,13 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
                 f"n={pr.get('n', 0)}"
             )
 
+    # Use raw S-xx strings as y categories (used by Scatter overlay + annotations);
+    # the axis will display HTML-colored tick labels matching the tier color.
     y_labels = [f"S-{s}" for s in subs]
+    y_ticktext = [
+        f"<b style='color:{TIER_COLORS.get(s[-1], '#333')}'>S-{s}</b>"
+        for s in subs
+    ]
     x_labels = [DOMAIN_LABELS[d] for d in DOMAINS]
 
     # Heatmap (no built-in text — we add per-cell annotations for color control)
@@ -246,6 +252,8 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
             tickfont=dict(size=10),
             len=0.9,
             thickness=14,
+            x=1.08,
+            xpad=0,
         ),
     ))
 
@@ -272,7 +280,6 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         showlegend=False,
     ))
 
-    # Tier band shapes + annotations (far-left column, separate from subtype axis labels)
     shapes = []
     annotations = []
 
@@ -282,7 +289,6 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
             v = z_med[i, j]
             if np.isnan(v):
                 continue
-            # White text on dark ends (<0.25 red, >0.75 green), black on light middle
             txt_color = "white" if (v < 0.28 or v > 0.78) else "#222"
             annotations.append(dict(
                 x=x_labels[j], y=y_labels[i],
@@ -297,48 +303,13 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         tier_ranges.setdefault(t, [i, i])
         tier_ranges[t][1] = i
 
-    # Layout in paper x-coords (paper 0 = left plot edge; negative = margin):
-    #   [ tier band ]     [ S-xx ticks ]  [ heatmap ]
-    #   -0.38..-0.15       -0.15..0       0..1
-    # Band sits in the far-left margin so it never overlaps with the
-    # subtype axis tick labels (which Plotly places close to x=0).
-    BAND_X0, BAND_X1 = -0.38, -0.15
-
-    for tier in "EDCBA":
-        if tier not in tier_ranges:
-            continue
-        lo, hi = tier_ranges[tier]
-        color = TIER_COLORS.get(tier, "#888")
-        shapes.append(dict(
-            type="rect",
-            xref="paper", yref="y",
-            x0=BAND_X0, x1=BAND_X1,
-            y0=lo - 0.5, y1=hi + 0.5,
-            fillcolor=color, opacity=0.92,
-            line=dict(width=0),
-            layer="above",
-        ))
-        y_center = (lo + hi) / 2
-        # All labels inside the band, stacked vertically
-        annotations.append(dict(
-            xref="paper", yref="y",
-            x=(BAND_X0 + BAND_X1) / 2, y=y_center,
-            text=(
-                f"<b style='font-size:18px'>{tier}</b><br>"
-                f"<span style='font-size:10px'>{TIER_NAMES.get(tier, '')}</span><br>"
-                f"<span style='font-size:9px;opacity:0.9'>{TIER_STAGES.get(tier, '')}</span>"
-            ),
-            showarrow=False,
-            font=dict(color="white", family="Arial"),
-            align="center",
-        ))
-
-    # n= labels on the right
+    # n= labels on the right (tier-colored, right-aligned)
     for i, sub in enumerate(subs):
+        color = TIER_COLORS.get(sub[-1], "#888")
         annotations.append(dict(
             xref="paper", yref="y",
-            x=1.015, y=i,
-            text=f"<span style='font-size:9px;color:#888'>n={profiles[sub].get('n', 0)}</span>",
+            x=1.01, y=i,
+            text=f"<span style='font-size:9px;color:{color}'>n={profiles[sub].get('n', 0)}</span>",
             showarrow=False,
             align="left",
             xanchor="left",
@@ -347,7 +318,7 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     fig.update_layout(
         title=title,
         height=max(520, 26 * n_rows + 100),
-        margin=dict(l=220, r=80, t=70, b=60),
+        margin=dict(l=80, r=140, t=70, b=60),
         xaxis=dict(
             side="top",
             tickfont=dict(size=11),
@@ -357,7 +328,10 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
         ),
         yaxis=dict(
             autorange="reversed",
-            tickfont=dict(size=10, color="#555"),
+            tickmode="array",
+            tickvals=y_labels,
+            ticktext=y_ticktext,
+            tickfont=dict(size=11),
             showgrid=False,
             zeroline=False,
             ticks="",
