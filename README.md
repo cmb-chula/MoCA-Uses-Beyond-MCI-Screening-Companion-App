@@ -4,6 +4,7 @@ Companion web app for the AAN 2026 poster:
 **"MoCA Uses Beyond MCI Screening: Data-Driven MoCA Score-Based Subtypes for Prediction of Dementia Outcomes and Neuroimaging Feature Analysis"**
 
 Bhukdee et al. | Chulalongkorn University, Bangkok, Thailand
+[![DOI](https://zenodo.org/badge/1200373984.svg)](https://doi.org/10.5281/zenodo.20510963)
 
 **Live app:** [aan2026.streamlit.app](https://aan2026.streamlit.app/)
 
