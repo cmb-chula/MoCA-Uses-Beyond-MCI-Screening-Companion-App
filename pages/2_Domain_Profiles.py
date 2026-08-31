@@ -6,6 +6,7 @@ from utils.sidebar import render_sidebar
 from utils.data_loader import load_domain_profiles, load_pathway_info, show_data_missing
 from utils.plotting import radar_chart, grouped_bar_chart, domain_tier_heatmap
 from utils.styling import TIER_NAMES, TIER_STAGES
+from utils.cell_floor import format_n
 
 render_sidebar()
 
@@ -59,7 +60,7 @@ selected_subs = st.multiselect(
     "Select subtypes to compare",
     subs_in_tier,
     default=subs_in_tier,
-    format_func=lambda s: f"S-{s} (n={profiles[s]['n']})",
+    format_func=lambda s: f"S-{s} ({format_n(profiles[s]['n'])})",
 )
 
 if not selected_subs:
@@ -84,7 +85,7 @@ all_subs = sorted(profiles.keys(), key=lambda x: (x[-1], int(x[:-1]) if x[:-1].i
 cross_subs = st.multiselect(
     "Select subtypes from any tier",
     all_subs,
-    format_func=lambda s: f"S-{s} (Tier {s[-1]}, n={profiles[s]['n']})",
+    format_func=lambda s: f"S-{s} (Tier {s[-1]}, {format_n(profiles[s]['n'])})",
     key="cross_tier",
 )
 

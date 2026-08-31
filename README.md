@@ -33,6 +33,8 @@ streamlit run app.py
 ## Data
 
 All data in `data/` is **pre-computed aggregate summaries only** — no individual-level ADNI data.
+Counts below 5 are stored as `"<5"` (never the raw number). Subtype labels in this
+export carry the verbal-fluency scoring defect; see `FLUENCY_DEFECT_NOTICE.md`.
 
 - `pathway_info.json` — Static pipeline constants (tier definitions, pathways, color palettes)
 - `domain_profiles.json` — Median/IQR domain scores per subtype (from clustering output)
