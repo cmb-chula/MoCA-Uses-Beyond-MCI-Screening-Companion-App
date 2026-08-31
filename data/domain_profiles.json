@@ -754,7 +754,7 @@
     "moca_total_med": 23.0
   },
   "2D": {
-    "n": 4,
+    "n": "<5",
     "tier": "D",
     "domains": {
       "VIS": {

@@ -9,6 +9,7 @@ from utils.styling import (
     subtype_color, apply_plotly_style,
     PETERSEN_PALETTE, MODALITY_COLORS,
 )
+from utils.cell_floor import format_n
 
 
 def radar_chart(profiles: dict, subtypes: list[str], title: str = "") -> go.Figure:
@@ -34,7 +35,7 @@ def radar_chart(profiles: dict, subtypes: list[str], title: str = "") -> go.Figu
         fig.add_trace(go.Scatterpolar(
             r=vals + [vals[0]],
             theta=categories + [categories[0]],
-            name=f"S-{sub} (n={profiles[sub]['n']})",
+            name=f"S-{sub} ({format_n(profiles[sub]['n'])})",
             line=dict(color=subtype_color(sub), width=2),
             fill="toself",
             fillcolor=subtype_color(sub),
@@ -67,7 +68,7 @@ def grouped_bar_chart(profiles: dict, subtypes: list[str], title: str = "") -> g
         vals = [profiles[sub]["domains"][d]["median"] for d in DOMAINS]
         errors = [profiles[sub]["domains"][d]["q3"] - profiles[sub]["domains"][d]["median"] for d in DOMAINS]
         fig.add_trace(go.Bar(
-            name=f"S-{sub} (n={profiles[sub]['n']})",
+            name=f"S-{sub} ({format_n(profiles[sub]['n'])})",
             x=categories,
             y=vals,
             error_y=dict(type="data", array=errors, visible=True),
@@ -113,7 +114,7 @@ def km_survival_chart(curves: dict, groups: list[str], title: str = "") -> go.Fi
         fig.add_trace(go.Scatter(
             x=c["time"],
             y=c["survival"],
-            name=f"{grp} (n={c['n']})",
+            name=f"{grp} ({format_n(c['n'])})",
             line=dict(color=color, width=2.5 if opacity == 1.0 else 1.5),
             opacity=opacity,
             hovertemplate=f"<b>{grp}</b><br>Time: %{{x:.1f}} yr<br>Survival: %{{y:.3f}}<extra></extra>",
@@ -220,7 +221,7 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
             hover[i][j] = (
                 f"S-{sub} \u2014 {DOMAIN_LABELS[d]}<br>"
                 f"Median: {med:.2f}<br>IQR: {q1:.2f}\u2013{q3:.2f}<br>"
-                f"n={pr.get('n', 0)}"
+                f"{format_n(pr.get('n', 0))}"
             )
 
     # Use raw S-xx strings as y categories; display HTML-colored tick text
@@ -228,7 +229,7 @@ def domain_tier_heatmap(profiles: dict, title: str = "") -> go.Figure:
     y_labels = [f"S-{s}" for s in subs]
     y_ticktext = [
         (f"<b style='color:{TIER_COLORS.get(s[-1], '#333')}'>S-{s}</b><br>"
-         f"<span style='color:#888;font-size:9px'>n={profiles[s].get('n', 0)}</span>")
+         f"<span style='color:#888;font-size:9px'>{format_n(profiles[s].get('n', 0))}</span>")
         for s in subs
     ]
     x_labels = [DOMAIN_LABELS[d] for d in DOMAINS]
@@ -665,8 +666,7 @@ def cascade_network_chart(
         if in_cascade:
             hover_parts.append("\u2605 Cascade subtype")
         if profiles and sub in profiles:
-            n = profiles[sub].get("n", "?")
-            hover_parts.append(f"n = {n}")
+            hover_parts.append(format_n(profiles[sub].get("n", "?")))
             domains = profiles[sub].get("domains", {})
             for d in DOMAINS:
                 if d in domains:
